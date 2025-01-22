@@ -38,7 +38,9 @@
 
 from flask import Flask, request, jsonify
 from users import users  
-app = Flask(__name__)
+app = Flask(__name__) 
+
+passwords = {}
 
 # Route 1: /user/<id> - Nutzerdetails zurückgeben
 @app.route('/user/<int:id>', methods=['GET'])
@@ -71,5 +73,25 @@ def search():
     else:
         return jsonify({"error": f"No user found with name: {name}"}), 404  # Benutzer nicht gefunden
 
+
+# Route 4: /set-password - Passwort für den Nutzer setzen (via POST)
+@app.route('/set-password', methods=['POST'])
+def set_password():
+    # Extrahiere die Daten aus der Anfrage
+    data = request.get_json()
+    user_id = data.get("id")
+    password = data.get("password")
+    
+    # Daten auf Vollständigkeit prüfen
+    if not user_id or not password:
+        return jsonify({"error": "User ID and password are required"}), 400
+
+    # Nutzersuche über ID
+    user = next((user for user in users if user["id"] == user_id), None)
+    if user:
+        passwords[user_id] = password  # Speichert PW
+        return jsonify({"message": f"Password for user {user['name']} successfully set!"}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404  # Fehler wenn nicht gefunden
 if __name__ == '__main__':
     app.run(debug=True, port=6060)
