@@ -47,3 +47,6 @@ if __name__ == "__main__":
 
 #/brand?brand=Hilfigher&type=t-shirts&condition=used
 #Response: Welcome to Hilfigher and the type is t-shirts and the condition is used
+
+
+
